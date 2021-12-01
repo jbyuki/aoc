@@ -1,7 +1,7 @@
 AOC
 ---
 
-Solutions of the excellent Advent of Code 2020.
+Solutions of the excellent Advent of Code 2020, 2021.
 
 The files are written in Lua but uses [ntangle.nvim](https://github.com/jbyuki/ntangle.nvim) to generate the script files.
 
