@@ -1,5 +1,6 @@
 ##day19
 @day19.lua=
+@requires
 @variables
 @read_input
 @make_map_with_scanner
@@ -10,15 +11,12 @@
 @show_result
 
 @read_input+=
-for line in io.lines("input.txt") do
+for line in io.lines("test.txt") do
   @if_scanner_header_make_new
   @if_number_read_coord
 end
 
-if vim.tbl_count(scanner) > 0 then
-  table.insert(scanners, scanner)
-  scanner = {}
-end
+@add_new_scanner_data
 
 @variables+=
 local scanners = {}
@@ -28,16 +26,18 @@ local scanner = {}
 
 @if_scanner_header_make_new+=
 if line:match("^%-%-%-") then
-  local num = line:match("scanner (%d+)")
-  if vim.tbl_count(scanner) > 0 then
-    table.insert(scanners, scanner)
-  end
-  scanner = {}
+  @add_new_scanner_data
+
+@add_new_scanner_data+=
+if vim.tbl_count(scanner) > 0 then
+  table.insert(scanners, scanner)
+end
+scanner = {}
 
 @if_number_read_coord+=
 elseif line:match("%d") then
   local x, y, z = line:match("(.+),(.+),(.+)")
-  table.insert(scanner, {
+  table.insert(scanner, Vec {
     tonumber(x),tonumber(y),tonumber(z)
   })
 end
@@ -49,7 +49,7 @@ local beacons_map = {}
 for i=1,#scanners do
   beacons_map[i] = {}
   for _, pos in ipairs(scanners[i]) do
-    local x, y, z = unpack(pos)
+    local x, y, z = pos:unpack()
 
     beacons_map[i][x] = beacons_map[i][x] or {}
     beacons_map[i][x][y] = beacons_map[i][x][y] or {}
@@ -71,11 +71,11 @@ for dp1=1,3 do
   local rem = {1,2,3}
   table.remove(rem, dp1)
   for sp1=1,2 do
-    local dir_p1 = { 0, 0, 0 }
+    local dir_p1 = Vec { 0, 0, 0 }
     if sp1 == 1 then
-      dir_p1[dp1] = 1
+      dir_p1.rows[dp1][1] = 1
     else
-      dir_p1[dp1] = -1
+      dir_p1.rows[dp1][1] = -1
     end
     
     @iterate_for_second_direction
@@ -85,14 +85,13 @@ end
 @iterate_for_second_direction+=
 for dp2=1,2 do
   for sp2=1,2 do
-    local dir_p2 = { 0, 0, 0 }
+    local dir_p2 = Vec { 0, 0, 0 }
     if sp2 == 1 then
-      dir_p2[rem[dp2]] = 1
+      dir_p2.rows[rem[dp2]][1] = 1
     else
-      dir_p2[rem[dp2]] = -1
+      dir_p2.rows[rem[dp2]][1] = -1
     end
     @find_third_direction_by_cross_product
-    @find_index_of_dirs
 
     local rotated_pos = {}
     @create_rotated_pos
@@ -101,26 +100,12 @@ for dp2=1,2 do
 end
 
 @find_third_direction_by_cross_product+=
-local dir_p3 = {}
-dir_p3[1] = dir_p1[2]*dir_p2[3] - dir_p1[3]*dir_p2[2]
-dir_p3[2] = dir_p1[3]*dir_p2[1] - dir_p1[1]*dir_p2[3]
-dir_p3[3] = dir_p1[1]*dir_p2[2] - dir_p1[2]*dir_p2[1]
-
-@find_index_of_dirs+=
-local ip1, ip2, ip3
-for m=1,3 do if dir_p1[m] ~= 0 then ip1 = m break end end
-for m=1,3 do if dir_p2[m] ~= 0 then ip2 = m break end end
-for m=1,3 do if dir_p3[m] ~= 0 then ip3 = m break end end
+local dir_p3 = dir_p1:cross(dir_p2)
 
 @create_rotated_pos+=
+local T = dir_p1:hconcat(dir_p2):hconcat(dir_p3)
 for k=1,#scanners[i] do
-  local x, y, z = unpack(scanners[i][k])
-
-  local pos = {}
-  pos[ip1] = dir_p1[ip1]*x
-  pos[ip2] = dir_p2[ip2]*y
-  pos[ip3] = dir_p3[ip3]*z
-
+  local pos = T * scanners[i][k]
   table.insert(rotated_pos, pos)
 end
 
@@ -145,14 +130,14 @@ for j=1,#scanners[h] do
 end
 
 @compute_delta_for_two_beacons+=
-local x1, y1, z1 = unpack(scanners[h][j])
-local x2, y2, z2 = unpack(rotated_pos[k])
+local delta = scanners[h][j] - rotated_pos[k] 
+local dx, dy, dz = delta:unpack()
 
-local dx, dy, dz = x1 - x2, y1 - y2, z1 - z2
 
 @compute_num_of_matching_beacons+=
 for m=1,#rotated_pos do
-  local x2, y2, z2 = unpack(rotated_pos[m])
+  local p2 = rotated_pos[m]
+  local x2, y2, z2 = p2:unpack()
 
   if beacons_map[h][x2+dx] and beacons_map[h][x2+dx][y2+dy] and beacons_map[h][x2+dx][y2+dy][z2+dz] then
     num_match = num_match + 1
@@ -166,22 +151,17 @@ local orientation = {}
 orientation[h] = orientation[h] or {}
 orientation[h][i] = {
   rotated_pos = rotated_pos,
-  delta = {dx, dy, dz},
-  axis = { dir_p1, dir_p2,  dir_p3 },
-  ip1 = ip1,
-  ip2 = ip2,
-  ip3 = ip3,
+  delta = delta,
+  axis = T,
 }
 
+@requires+=
+require "tangle.matrix"
 
 @find_absolute_position_for_all_beacons+=
-local abs_pos = {
-  { 0, 0, 0 }
-}
+local abs_pos = { Vec { 0 , 0 , 0 } }
 
-local axis = {
-  { { 1, 0, 0 }, { 0, 1, 0 }, { 0, 0, 1 } },
-}
+local axis = { Mat(3) }
 
 while #scanners > vim.tbl_count(abs_pos) do
   for i=1,#scanners do
@@ -201,36 +181,16 @@ print("Done!")
 @if_has_pos_add_abs_pos+=
 local o = orientation[i][j]
 local ax = axis[i]
-local pos = { abs_pos[i][1], abs_pos[i][2], abs_pos[i][3] }
-for m=1,3 do
-  for n=1,3 do
-    pos[n] = pos[n] + o.delta[m] * axis[i][m][n]
-  end
-end
 
-axis[j] = {
-  {0, 0, 0},
-  {0, 0, 0},
-  {0, 0, 0}
-}
-
-
-for n=1,3 do
-  for m=1,3 do
-    for k=1,3 do
-      axis[j][n][m] = axis[j][n][m] + axis[i][k][m] * o.axis[n][k]
-    end
-  end
-end
-
-abs_pos[j] = pos
+axis[j] = axis[i] * o.axis
+abs_pos[j] = abs_pos[i] + axis[i] * o.delta
 
 @make_list_of_all_beacons+=
 local all_bacons = {}
 local beacon_count = 0
 for i=1,#scanners do
   for n=1,#scanners[i] do
-    local delta = scanners[i][n]
+    local p = scanners[i][n]
     @transform_point
     @add_beacon_to_map
   end
@@ -240,18 +200,15 @@ end
 print("Answer " .. beacon_count)
 
 @transform_point+=
-local pos = { abs_pos[i][1], abs_pos[i][2], abs_pos[i][3] }
-for m=1,3 do
-  for n=1,3 do
-    pos[n] = pos[n] + delta[m] * axis[i][m][n]
-  end
-end
+local pos = abs_pos[i] + axis[i] * p
+
+local x, y, z = pos:unpack()
 
 @add_beacon_to_map+=
-all_bacons[pos[1]] = all_bacons[pos[1]] or {}
-all_bacons[pos[1]][pos[2]] = all_bacons[pos[1]][pos[2]] or {}
-if not all_bacons[pos[1]][pos[2]][pos[3]] then
-  all_bacons[pos[1]][pos[2]][pos[3]] = true
+all_bacons[x] = all_bacons[x] or {}
+all_bacons[x][y] = all_bacons[x][y] or {}
+if not all_bacons[x][y][z] then
+  all_bacons[x][y][z] = true
   beacon_count = beacon_count + 1 
 end
 
@@ -268,10 +225,7 @@ end
 print("answer part 2 " .. best)
 
 @compute_manhattan_distance+=
-local dist = 0
-dist = dist + math.abs(abs_pos[i][1]-abs_pos[j][1])
-dist = dist + math.abs(abs_pos[i][2]-abs_pos[j][2])
-dist = dist + math.abs(abs_pos[i][3]-abs_pos[j][3])
+local dist = (abs_pos[i]-abs_pos[j]):l1_norm()
 
 @pick_biggest_distance+=
 if not best or best < dist then
