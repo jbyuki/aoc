@@ -29,7 +29,7 @@ if line:match("^%-%-%-") then
   @add_new_scanner_data
 
 @add_new_scanner_data+=
-if vim.tbl_count(scanner) > 0 then
+if #scanner > 0 then
   table.insert(scanners, scanner)
 end
 scanner = {}
@@ -37,9 +37,7 @@ scanner = {}
 @if_number_read_coord+=
 elseif line:match("%d") then
   local x, y, z = line:match("(.+),(.+),(.+)")
-  table.insert(scanner, Vec {
-    tonumber(x),tonumber(y),tonumber(z)
-  })
+  table.insert(scanner, Vec { tonumber(x),tonumber(y),tonumber(z) })
 end
 
 @variables+=
@@ -180,7 +178,6 @@ print("Done!")
 
 @if_has_pos_add_abs_pos+=
 local o = orientation[i][j]
-local ax = axis[i]
 
 axis[j] = axis[i] * o.axis
 abs_pos[j] = abs_pos[i] + axis[i] * o.delta
