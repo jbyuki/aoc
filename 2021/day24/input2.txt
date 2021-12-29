@@ -8,316 +8,44 @@ z =
 (((w1 + 15) * 26 + (w2 + 5))*26 + (w3 + 6))*26 + 7
 
 
-inp w
-mul x 0
-add x z
-mod x 26
-add x 15
-eql x w
-eql x 0
-mul y 0
-add y 25
-mul y x
-add y 1
-mul z y
-mul y 0
-add y w
-add y 15
-mul y x
-add z y
+z = w1+15                1  
 
-z = w1+15
+z = z * 26 + (w + 5)     1 
 
-inp w
-mul x 0
-add x z
-mod x 26
-add x 12
-eql x w
-eql x 0
-mul y 0
-add y 25
-mul y x
-add y 1
-mul z y
-mul y 0
-add y w
-add y 5
-mul y x
-add z y
+z = z * 26 + (w + 6)     9 
 
-z = z * 26 + (w + 5)
-
-inp w
-mul x 0
-add x z
-mod x 26
-add x 13
-eql x w
-eql x 0
-mul y 0
-add y 25
-mul y x
-add y 1
-mul z y
-mul y 0
-add y w
-add y 6
-mul y x
-add z y
-
-z = z * 26 + (w + 6)
-
-inp w
-mul x 0
-add x z
-mod x 26
-div z 26
-add x -14
-eql x w
-eql x 0
-mul y 0
-add y 25
-mul y x
-add y 1
-mul z y
-mul y 0
-add y w
-add y 7
-mul y x
-add z y
-
-if (z%26)-14 = w
+if (z%26)-14 = w         1
   z = z/26
 end
 
+z = z*26 + (w+9)         1  
 
-inp w
-mul x 0
-add x z
-mod x 26
-add x 15
-eql x w
-eql x 0
-mul y 0
-add y 25
-mul y x
-add y 1
-mul z y
-mul y 0
-add y w
-add y 9
-mul y x
-add z y
-
-z = z*26 + (w+9)
-
-inp w
-mul x 0
-add x z
-mod x 26
-div z 26
-add x -7
-eql x w
-eql x 0
-mul y 0
-add y 25
-mul y x
-add y 1
-mul z y
-mul y 0
-add y w
-add y 6
-mul y x
-add z y
-
-if (z%26)-7 = w
+if (z%26)-7 = w          3
   z = z/26
 end
 
+z = z*26 + (w+14)        1 
 
-inp w
-mul x 0
-add x z
-mod x 26
-add x 14
-eql x w
-eql x 0
-mul y 0
-add y 25
-mul y x
-add y 1
-mul z y
-mul y 0
-add y w
-add y 14
-mul y x
-add z y
+z = z*26 + (w+3)         6
 
-z = z*26 + (w+14)
+z = z*26 + (w+1)         7  
 
-inp w
-mul x 0
-add x z
-mod x 26
-add x 15
-eql x w
-eql x 0
-mul y 0
-add y 25
-mul y x
-add y 1
-mul z y
-mul y 0
-add y w
-add y 3
-mul y x
-add z y
-
-z = z*26 + (w+3)
-
-
-inp w
-mul x 0
-add x z
-mod x 26
-add x 15
-eql x w
-eql x 0
-mul y 0
-add y 25
-mul y x
-add y 1
-mul z y
-mul y 0
-add y w
-add y 1
-mul y x
-add z y
-
-z = z*26 + (w+1)
-
-
-
-inp w
-mul x 0
-add x z
-mod x 26
-div z 26
-add x -7
-eql x w
-eql x 0
-mul y 0
-add y 25
-mul y x
-add y 1
-mul z y
-mul y 0
-add y w
-add y 3
-mul y x
-add z y
-
-if (z%26)-7 = w
+if (z%26)-7 = w          1
   z = z/26
 end
 
-
-inp w
-mul x 0
-add x z
-mod x 26
-div z 26
-add x -8
-eql x w
-eql x 0
-mul y 0
-add y 25
-mul y x
-add y 1
-mul z y
-mul y 0
-add y w
-add y 4
-mul y x
-add z y
-
-if (z%26)-8 = w
+if (z%26)-8 = w          1 
   z = z/26
 end
 
-
-
-
-inp w
-mul x 0
-add x z
-mod x 26
-div z 26
-add x -7
-eql x w
-eql x 0
-mul y 0
-add y 25
-mul y x
-add y 1
-mul z y
-mul y 0
-add y w
-add y 6
-mul y x
-add z y
-
-
-if (z%26)-7 = w
+if (z%26)-7 = w          8 
   z = z/26
 end
 
-
-inp w
-mul x 0
-add x z
-mod x 26
-div z 26
-add x -5
-eql x w
-eql x 0
-mul y 0
-add y 25
-mul y x
-add y 1
-mul z y
-mul y 0
-add y w
-add y 7
-mul y x
-add z y
-
-
-if (z%26)-5 = w
+if (z%26)-5 = w          1
   z = z/26
 end
 
-
-inp w
-mul x 0
-add x z
-mod x 26
-div z 26
-add x -10
-eql x w
-eql x 0
-mul y 0
-add y 25
-mul y x
-add y 1
-mul z y
-mul y 0
-add y w
-add y 1
-mul y x
-add z y
-
-if (z%26)-10 = w
+if (z%26)-10 = w         6
   z = z/26
 end
