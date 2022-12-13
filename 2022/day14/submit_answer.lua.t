@@ -18,10 +18,8 @@ else
 end
 
 @read_test+=
-local test_lines = {}
-for line in io.lines("test.txt") do
-  table.insert(test_lines, line)
-end
+local test_lines = vim.split(test_input, "\n")
+table.remove(test_lines)
 
 @read_input+=
 local input_lines = {}
