@@ -31,7 +31,7 @@ for _, line in ipairs(lines) do
 	@add_valve
 end
 
-@local_variables+=
+@variables+=
 local tunnels = {}
 local flow_rates = {}
 
@@ -50,9 +50,11 @@ passages = vim.tbl_map(vim.trim, passages)
 flow_rates[name] = flow_rate
 tunnels[name] = passages
 
+@variables+=
+local shortest = {}
+
 @calculate_distance_from_one_to_another+=
 local keys = vim.tbl_keys(flow_rates)
-local shortest = {}
 for _, start in ipairs(keys) do
 	shortest[start] = {}
 	@do_bfs_on_cur
@@ -91,23 +93,28 @@ end
 @compute_total_possible_flow
 @explore_all_with_dp
 
+@variables+=
+local all = {}
+
 @get_non_zero+=
-local nonzeros = {}
 for name, flow_rate in pairs(flow_rates) do
 	if flow_rate ~= 0 then
-		table.insert(nonzeros, name)
+		table.insert(all, name)
 	end
 end
 
+@variables+=
+local total_flow
+
 @compute_total_possible_flow+=
-local totalsum = 0
+total_flow = 0
 for _, flow_rate in pairs(flow_rates) do
-	totalsum = totalsum + flow_rate
+	total_flow = total_flow + flow_rate
 end
 
 @functions+=
-function explore(current, shortest, all, mask, numremaining, tick, totalsum, currentbest, flowed, flow, flow_rates) 
-	if totalsum*tick + flowed < currentbest then
+function explore(current, shortest, all, mask, numremaining, tick, total_flow, currentbest, flowed, flow, flow_rates) 
+	if total_flow*tick + flowed < currentbest then
 		return currentbest
 	end
 
@@ -123,7 +130,7 @@ if numremaining > 0 then
 			local dist = shortest[current][all[i]]
 			mask[i] = false
 			if tick-dist-1 > 0 then
-				currentbest = explore(all[i], shortest, all, mask, numremaining-1, tick-dist-1, totalsum, currentbest, flowed + flow*(dist+1), flow+flow_rates[all[i]], flow_rates)
+				currentbest = explore(all[i], shortest, all, mask, numremaining-1, tick-dist-1, total_flow, currentbest, flowed + flow*(dist+1), flow+flow_rates[all[i]], flow_rates)
 			end
 			mask[i] = true
 		end
@@ -137,8 +144,8 @@ end
 
 @explore_all_with_dp+=
 local mask = {}
-for i=1,#nonzeros do
+for i=1,#all do
 	table.insert(mask, true)
 end
 
-local answer = explore("AA", shortest, nonzeros, mask, #nonzeros, 30, totalsum, 0, 0, 0, flow_rates)
+local answer = explore("AA", shortest, all, mask, #all, 30, total_flow, 0, 0, 0, flow_rates)
