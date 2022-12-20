@@ -51,11 +51,11 @@ end
 @if_success_submit_part1+=
 local answer = part1(input_lines, false)
 @convert_answer_and_print
-@create_pipes
-@done_callback
-@submit_part1_answer_with_curl
-@register_pipes
-@wait_for_answer
+-- @create_pipes
+-- @done_callback
+-- @submit_part1_answer_with_curl
+-- @register_pipes
+-- @wait_for_answer
 
 @if_success_status_to_part2
 

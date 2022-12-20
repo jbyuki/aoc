@@ -76,7 +76,7 @@ function list_startswith(l1, l2)
 end
 
 @functions+=
-function best_geodes(costs)
+function best_geodes(costs, total)
 	local ores = { 0, 0, 0, 0 }
 	local buy = { 4 }
 	local waits = {}
@@ -114,8 +114,11 @@ end
 wait = wait + 1
 
 @if_wait_after_end_figureout_geodes_at_end_and_go_to_next+=
-if wait + tick >= 24 or not can_buy then
-	local score = ores[4] + (24 - tick)*robots[4]
+if wait + tick >= total or not can_buy then
+	local score = ores[4] + (total - tick)*robots[4]
+	if score > best then
+		print(score)
+	end
 	best = math.max(best, score)
 	can_buy = false
 	@go_to_next_failed_to_buy
@@ -175,7 +178,7 @@ table.insert(buy, 4)
 @foreach_blueprint_find_quality_level+=
 local answer = 0
 for id=1,#blueprints do
-	local quality = best_geodes(blueprints[id])
+	local quality = best_geodes(blueprints[id], 24)
 	print(id, quality)
 	answer = answer + quality * id
 end
