@@ -10,7 +10,6 @@ function part2(lines, istest)
 	@parse_maps
 	@find_loc_foreach_seed_range
 	@find_minimum_in_range
-
 	return answer
 end
 
@@ -137,13 +136,4 @@ for _, range in ipairs(final_ranges) do
 		answer = range[1]
 	end
 end
-
-@expand_seeds+=
-local new_seeds = {}
-for i=1,#seeds,2 do
-	for s=seeds[i],seeds[i]+seeds[i+1]-1 do
-		table.insert(new_seeds, s)
-	end
-end
-seeds = new_seeds
 
