@@ -157,5 +157,5 @@ answer = 1
 for num, pow in pairs(min_atoms) do
 	answer = answer * (num ^ pow)
 end
--- this problem could be potentially a lot harder but the input is made easy so not too worry
+-- this problem could be potentially a lot harder but the input is made easy thankfully
 
