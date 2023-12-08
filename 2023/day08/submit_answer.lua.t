@@ -19,8 +19,8 @@ else
 end
 
 @read_test+=
-local test_lines = vim.split(test_input, "\n")
-table.remove(test_lines)
+local test_lines1 = vim.split(test_input1 or test_input, "\n")
+table.remove(test_lines1)
 
 @read_input+=
 local input_lines = {}
@@ -29,7 +29,7 @@ for line in io.lines("input.txt") do
 end
 
 @execute_test_part1+=
-local result_test = part1(test_lines, true)
+local result_test = part1(test_lines1, true)
 if result_test == answer_test1 then
 	print("Test Part 1 Passed!")
 	@if_success_submit_part1
@@ -38,8 +38,12 @@ else
 	print(("Got \"%s\" but should be \"%s\""):format(result_test, answer_test1))
 end
 
+@read_test+=
+local test_lines2 = vim.split(test_input2 or test_input1 or test_input, "\n")
+table.remove(test_lines2)
+
 @execute_test_part2+=
-local result_test = part2(test_lines, true)
+local result_test = part2(test_lines2, true)
 if result_test == answer_test2 then
 	print("Test Part 2 Passed!")
 	@if_success_submit_part2
